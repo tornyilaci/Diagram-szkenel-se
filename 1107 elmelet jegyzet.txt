@@ -6,7 +6,6 @@ detektálás egyenesek segítségével
 kör detektálása hugh transzformáció
 
 sarokpont detektálása
-	 jellemzőpont
-	mintakeresésre jó
-	képillesztés
-	optikai áramlás
+	 élterület
+	harris sarok detektor
+	shi- tomasi sarok detektor
