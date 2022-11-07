@@ -1,0 +1,12 @@
+
+
+detektálás egyenesek segítségével
+	"pontok", melyek egyenesre illeszkednek (határnoval)
+
+kör detektálása hugh transzformáció
+
+sarokpont detektálása
+	 jellemzőpont
+	mintakeresésre jó
+	képillesztés
+	optikai áramlás
