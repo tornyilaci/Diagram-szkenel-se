@@ -1,0 +1,18 @@
+komponens keresés, 
+kontúr keresés az elméletben bennee van != él detektálással
+cany vagy él detektálásw
+
+belső-külső kontúr
+teljes kontúr óra forgásának megfeleően
+hasonló a cany detektorhoz, de ez pontosabb
+
+külső kontúr után lehet csak a belsőt keresni
+átírjuk 0-ra a külső kontúrkeresésnél érintett háttérpontokat
+
+kontúr simítás
+	sarokpontok csökkentése
+	zajszűrés 
+	ramer-douglas-peucker algoritmus ugyanaz mint open cv-ben
+	távolság számító algoritmus 
+
+momentum
