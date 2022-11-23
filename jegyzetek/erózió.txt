@@ -1,0 +1,1 @@
+objektumok határának detektálásához használandó erózió módszerrel lehet használni az objektumok kicsinyítésével
