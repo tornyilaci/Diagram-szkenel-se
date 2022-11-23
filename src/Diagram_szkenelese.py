@@ -67,7 +67,7 @@ def getContours(img):
                         (0, 0, 0), 2)
 
 
-path = 'images\shape.jpg'
+path = 'images/abra.png'
 img = cv2.imread(path)
 imgContour = img.copy()
 
@@ -77,7 +77,7 @@ imgCanny = cv2.Canny(imgBlur, 50, 50)
 getContours(imgCanny)
 
 imgBlank = np.zeros_like(img)
-imgStack = stackImages(0.4, ([img, imgGray, imgBlur],
+imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
                              [imgCanny, imgContour, imgBlank]))
 
 cv2.imshow("Stack", imgStack)
