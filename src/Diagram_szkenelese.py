@@ -1,6 +1,15 @@
 import cv2
 import numpy as np
+from skimage.transform import (hough_line, hough_line_peaks)
 
+def preprocess(img):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_blur = cv2.GaussianBlur(img_gray, (11, 11), 1)
+    img_canny = cv2.Canny(img_blur, 200, 0)
+    kernel = np.ones((7, 7))
+    img_dilate = cv2.dilate(img_canny, kernel, iterations=1)
+    img_erode = cv2.erode(img_dilate, kernel, iterations=1)
+    return img_erode
 
 def stackImages(scale, imgArray):
     rows = len(imgArray)
@@ -47,18 +56,19 @@ def find_tip(points, convex_hull):
             return tuple(points[j])
 
 def getContours(img):
-    contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
-        print(area)
-        if area > 500:
-            cv2.drawContours(imgContour, cnt, -1, (255, 0, 0), 3)
+        #print(area)
+        if 250 < area <10000:
+            cv2.drawContours(imgContour, cnt, -1, (255, 0, 0), -1)
             peri = cv2.arcLength(cnt, True)
             # print(peri)
             approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
             hull = cv2.convexHull(approx, returnPoints=False)
             sides = len(hull)
-            print(len(approx))
+            print(sides)
+            #print(len(approx))
             objCor = len(approx)
             x, y, w, h = cv2.boundingRect(approx)
 
@@ -91,16 +101,6 @@ def getContours(img):
                         (x + (w // 2) - 10, y + (h // 2) - 10), cv2.FONT_HERSHEY_COMPLEX, 0.7,
                         (0, 0, 0), 2)
 
-def preprocess(img):
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img_blur = cv2.GaussianBlur(img_gray, (5, 5), 1)
-    img_canny = cv2.Canny(img_blur, 50, 50)
-    kernel_1 = np.ones((5, 5), np.uint8)
-    kernel_2 = np.ones((4, 4), np.uint8)
-    img_dilate = cv2.dilate(img_canny, kernel_1, iterations=1)
-    img_erode = cv2.erode(img_dilate, kernel_2, iterations=1)
-    return img_erode
-
 path = 'images/probaabra.png'
 img = cv2.imread(path)
 imgContour = img.copy()
@@ -111,7 +111,7 @@ imgCanny = cv2.Canny(imgBlur, 50, 50)
 getContours(preprocess(img))
 
 imgBlank = np.zeros_like(img)
-imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
+imgStack = stackImages(0.8, ([img, imgGray, imgBlur],
                              [imgCanny, imgContour, imgBlank]))
 
 cv2.imshow("Stack", imgStack)
