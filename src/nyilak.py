@@ -24,7 +24,7 @@ def find_tip(points, convex_hull):
             return tuple(points[j])
 
 
-path = 'images/shape2.png'
+path = 'images/nyilak.png'
 img = cv2.imread(path)
 
 contours, hierarchy = cv2.findContours(preprocess(img), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
@@ -39,7 +39,7 @@ for cnt in contours:
         arrow_tip = find_tip(approx[:, 0, :], hull.squeeze())
         if arrow_tip:
             cv2.drawContours(img, [cnt], -1, (0, 255, 0), 3)
-            cv2.circle(img, arrow_tip, 3, (0, 0, 255), cv2.FILLED)
+            #cv2.circle(img, arrow_tip, 3, (0, 0, 255), cv2.FILLED)
 
 cv2.imshow("Image", img)
 cv2.waitKey(0)
