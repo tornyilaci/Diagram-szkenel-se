@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def stackImages(scale, imgArray):
     rows = len(imgArray)
     cols = len(imgArray[0])
@@ -52,7 +53,7 @@ def getContours(img):
                 objectType = "Tri"
             elif objCor == 4:
                 aspRatio = w / float(h)
-                if aspRatio > 0.98 and aspRatio < 1.03:
+                if 0.98 < aspRatio < 1.03:
                     objectType = "Square"
                 else:
                     objectType = "Rectangle"
@@ -67,7 +68,7 @@ def getContours(img):
                         (0, 0, 0), 2)
 
 
-path = 'images/abra.png'
+path = 'images/shape2.png'
 img = cv2.imread(path)
 imgContour = img.copy()
 
