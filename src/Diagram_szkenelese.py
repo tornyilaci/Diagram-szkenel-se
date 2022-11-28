@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from skimage.transform import (hough_line, hough_line_peaks)
 
 def preprocess(img):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -111,7 +110,7 @@ imgCanny = cv2.Canny(imgBlur, 50, 50)
 getContours(preprocess(img))
 
 imgBlank = np.zeros_like(img)
-imgStack = stackImages(0.8, ([img, imgGray, imgBlur],
+imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
                              [imgCanny, imgContour, imgBlank]))
 
 cv2.imshow("Stack", imgStack)
