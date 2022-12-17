@@ -5,7 +5,7 @@ def preprocess(img):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img_blur = cv2.GaussianBlur(img_gray, (11, 11), 1)
     img_canny = cv2.Canny(img_blur, 200, 0)
-    kernel = np.ones((7, 7))
+    kernel = np.ones((5, 5))
     img_dilate = cv2.dilate(img_canny, kernel, iterations=1)
     img_erode = cv2.erode(img_dilate, kernel, iterations=1)
     return img_erode
@@ -43,64 +43,48 @@ def stackImages(scale, imgArray):
         ver = hor
     return ver
 
-def find_tip(points, convex_hull):
-    length = len(points)
-    indices = np.setdiff1d(range(length), convex_hull)
-
-    for i in range(2):
-        j = indices[i] + 2
-        if j > length - 1:
-            j = length - j
-        if np.all(points[j] == points[indices[i - 1] - 2]):
-            return tuple(points[j])
-
 def getContours(img):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    foundObject = set()
     for cnt in contours:
         area = cv2.contourArea(cnt)
-        #print(area)
-        if 250 < area <10000:
+        if 250 < area < 10000:
             cv2.drawContours(imgContour, cnt, -1, (255, 0, 0), -1)
             peri = cv2.arcLength(cnt, True)
-            # print(peri)
             approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
             hull = cv2.convexHull(approx, returnPoints=False)
             sides = len(hull)
-            print(sides)
-            #print(len(approx))
             objCor = len(approx)
             x, y, w, h = cv2.boundingRect(approx)
-
-            if objCor == 3:
-                objectType = "Tri"
-            elif objCor == 4:
+            objectType = "None"
+            if objCor == 4:
                 aspRatio = w / float(h)
                 if 0.98 < aspRatio < 1.03:
                     objectType = "Square"
                 else:
                     objectType = "Rectangle"
-            elif objCor == 5:
-                objectType = "Pentagon"
-            elif objCor == 6:
-                objectType = "Hexagon"
-            elif 6 > sides > 3 and sides + 2 == len(approx):
-                arrow_tip = find_tip(approx[:, 0, :], hull.squeeze())
-                if arrow_tip:
-                    cv2.drawContours(img, [cnt], -1, (0, 255, 0), 3)
-                    # cv2.circle(img, arrow_tip, 3, (0, 0, 255), cv2.FILLED)
-                    objectType = "Arrow"
             elif objCor > 7:
                 objectType = "Circle"
-
-            else:
-                objectType = "None"
-
-            #cv2.rectangle(imgContour, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            foundObject.add(objectType)
             cv2.putText(imgContour, objectType,
                         (x + (w // 2) - 10, y + (h // 2) - 10), cv2.FONT_HERSHEY_COMPLEX, 0.7,
                         (0, 0, 0), 2)
+        else:
+            peri = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
+            x, y, w, h = cv2.boundingRect(approx)
+            cv2.putText(imgContour, "Arrow", (x + (w // 2) - 10, y + (h // 2) - 10), cv2.FONT_HERSHEY_COMPLEX, 0.7,
+                        (0, 0, 0), 1)
+            foundObject.add("Arrow")
+    requiredObjects = {"Arrow", "Circle", "Rectangle"}
+    if requiredObjects.issubset(foundObject):
+        cv2.putText(imgContour, "Valid Diagram", (10, 10), cv2.FONT_HERSHEY_COMPLEX, 0.7,
+                    (0, 0, 0), 1)
 
-path = 'images/probaabra.png'
+
+
+
+path = 'images/testapbra.png'
 img = cv2.imread(path)
 imgContour = img.copy()
 
@@ -110,8 +94,7 @@ imgCanny = cv2.Canny(imgBlur, 50, 50)
 getContours(preprocess(img))
 
 imgBlank = np.zeros_like(img)
-imgStack = stackImages(0.6, ([img, imgGray, imgBlur],
-                             [imgCanny, imgContour, imgBlank]))
+imgStack = stackImages(0.6, ([img, imgContour]))
 
 cv2.imshow("Stack", imgStack)
 

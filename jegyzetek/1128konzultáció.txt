@@ -1,0 +1,7 @@
+A rombuszok maradhatnak téglalapok
+a nyilak maradhatnak egyeneesek de összekötő vékonyaknak kell lenniük
+ha felismerte a formákat akkor azokat jegyezzük meg 
+de addig tüntessük el a nyilakat
+(fekete háttér a kontúrokon kívül)
+ha ez megvan akkor most a kontúrokat tüntetjük el feltüntetjük a nyilakat
+és őket is megvizsgáljuk
