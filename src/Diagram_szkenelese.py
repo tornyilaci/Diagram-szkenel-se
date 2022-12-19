@@ -46,10 +46,11 @@ def stackImages(scale, imgArray):
 def getContours(img):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
     foundObject = set()
+    circleCount = 0
     for cnt in contours:
         area = cv2.contourArea(cnt)
         if 250 < area < 10000:
-            cv2.drawContours(imgContour, cnt, -1, (255, 0, 0), -1)
+            cv2.drawContours(imgContour, cnt, -1, (155, 155, 0), 1)
             peri = cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
             hull = cv2.convexHull(approx, returnPoints=False)
@@ -65,10 +66,10 @@ def getContours(img):
                     objectType = "Rectangle"
             elif objCor > 7:
                 objectType = "Circle"
+                circleCount = circleCount + 1
             foundObject.add(objectType)
-            cv2.putText(imgContour, objectType,
-                        (x + (w // 2) - 10, y + (h // 2) - 10), cv2.FONT_HERSHEY_COMPLEX, 0.7,
-                        (0, 0, 0), 2)
+            cv2.putText(imgContour, objectType, (x + (w // 2) - 10, y + (h // 2) - 10),
+                        cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 0), 2)
         else:
             peri = cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, 0.02 * peri, True)
@@ -77,14 +78,14 @@ def getContours(img):
                         (0, 0, 0), 1)
             foundObject.add("Arrow")
     requiredObjects = {"Arrow", "Circle", "Rectangle"}
-    if requiredObjects.issubset(foundObject):
-        cv2.putText(imgContour, "Valid Diagram", (10, 10), cv2.FONT_HERSHEY_COMPLEX, 0.7,
+    if (requiredObjects.issubset(foundObject)) and (circleCount > 1):
+        cv2.putText(imgContour, "Valid Diagram", (10, 20), cv2.FONT_HERSHEY_COMPLEX, 0.7,
+                    (0, 0, 0), 1)
+    else:
+        cv2.putText(imgContour, "Not Valid Diagram", (10, 20), cv2.FONT_HERSHEY_COMPLEX, 0.7,
                     (0, 0, 0), 1)
 
-
-
-
-path = 'images/testapbra.png'
+path = 'images/002_test.jpg'
 img = cv2.imread(path)
 imgContour = img.copy()
 
@@ -94,7 +95,7 @@ imgCanny = cv2.Canny(imgBlur, 50, 50)
 getContours(preprocess(img))
 
 imgBlank = np.zeros_like(img)
-imgStack = stackImages(0.6, ([img, imgContour]))
+imgStack = stackImages(0.7, ([img, imgContour]))
 
 cv2.imshow("Stack", imgStack)
 
