@@ -85,7 +85,7 @@ def getContours(img):
         cv2.putText(imgContour, "Not Valid Diagram", (10, 20), cv2.FONT_HERSHEY_COMPLEX, 0.7,
                     (0, 0, 0), 1)
 
-path = 'images/002_test.jpg'
+path = 'images/003_test.jpg'
 img = cv2.imread(path)
 imgContour = img.copy()
 
